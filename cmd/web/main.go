@@ -6,10 +6,15 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/frankie-mur/gorter/internal/models"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+type application struct {
+	urls *models.UrlModel
+}
 
 func main() {
 	if err := godotenv.Load(); err != nil {
@@ -33,26 +38,16 @@ func main() {
 
 	srv := http.NewServeMux()
 
-	srv.HandleFunc("/shorten", shortenRoute)
+	coll := client.Database("GorterDB").Collection("gorter")
+
+	app := &application{
+		urls: &models.UrlModel{DB: coll},
+	}
+	//TODO: WHY ISNT THIS WORKING
+	srv.HandleFunc("/shorten", app.urlCreate)
 
 	http.ListenAndServe(":4000", srv)
 
-	// coll := client.Database("sample_mflix").Collection("movies")
-	// title := "Back to the Future"
-	// var result bson.M
-	// err = coll.FindOne(context.TODO(), bson.D{{"title", title}}).Decode(&result)
-	// if err == mongo.ErrNoDocuments {
-	// 	fmt.Printf("No document was found with the title %s\n", title)
-	// 	return
-	// }
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// jsonData, err := json.MarshalIndent(result, "", "    ")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Printf("%s\n", jsonData)
 }
 
 func openDB(uri string) (*mongo.Client, error) {
@@ -62,9 +57,4 @@ func openDB(uri string) (*mongo.Client, error) {
 	}
 
 	return client, nil
-}
-
-func shortenRoute(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("OKAY"))
-
 }
