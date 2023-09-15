@@ -43,8 +43,9 @@ func main() {
 	app := &application{
 		urls: &models.UrlModel{DB: coll},
 	}
-	//TODO: WHY ISNT THIS WORKING
-	srv.HandleFunc("/shorten", app.urlCreate)
+
+	srv.HandleFunc("/shorten", app.urlFind)
+	srv.HandleFunc("/create", app.urlCreate)
 
 	http.ListenAndServe(":4000", srv)
 
