@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -40,7 +41,7 @@ func (m *UrlModel) FindOriginalUrl(shortURL string) (*string, error) {
 	return &result.OriginalURL, nil
 }
 
-func (m *UrlModel) CreateUrl(shortUrl string, originalUrl string, hitCount int) error {
+func (m *UrlModel) CreateUrl(shortUrl string, originalUrl string) error {
 	url := Url{
 		ShortURL:       shortUrl,
 		OriginalURL:    originalUrl,
@@ -52,6 +53,6 @@ func (m *UrlModel) CreateUrl(shortUrl string, originalUrl string, hitCount int) 
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	fmt.Print("Successfully created url: ", url)
 	return nil
 }

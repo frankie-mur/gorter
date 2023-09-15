@@ -58,8 +58,8 @@ func main() {
 		urls: &models.UrlModel{DB: coll},
 	}
 
-	r.Get("/shorten", app.urlFind)
-	r.Post("/create", app.urlCreate)
+	r.Get("/shorten/*", app.urlFind)
+	r.Post("/url/create", app.urlCreate)
 
 	http.ListenAndServe(":4000", r)
 
