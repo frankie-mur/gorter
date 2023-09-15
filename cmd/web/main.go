@@ -5,8 +5,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/frankie-mur/gorter/internal/models"
+	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -36,7 +39,18 @@ func main() {
 		}
 	}()
 
-	srv := http.NewServeMux()
+	r := chi.NewRouter()
+
+	// A good base middleware stack
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+
+	// Set a timeout value on the request context (ctx), that will signal
+	// through ctx.Done() that the request has timed out and further
+	// processing should be stopped.
+	r.Use(middleware.Timeout(60 * time.Second))
 
 	coll := client.Database("GorterDB").Collection("gorter")
 
@@ -44,10 +58,10 @@ func main() {
 		urls: &models.UrlModel{DB: coll},
 	}
 
-	srv.HandleFunc("/shorten", app.urlFind)
-	srv.HandleFunc("/create", app.urlCreate)
+	r.Get("/shorten", app.urlFind)
+	r.Post("/create", app.urlCreate)
 
-	http.ListenAndServe(":4000", srv)
+	http.ListenAndServe(":4000", r)
 
 }
 
