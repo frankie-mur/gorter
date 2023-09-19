@@ -63,8 +63,6 @@ func main() {
 		templ: component,
 	}
 
-	//render html template
-
 	r.Get("/home", app.HomePage)
 
 	r.Get("/shorten/*", app.urlFind)
