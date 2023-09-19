@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/a-h/templ"
 	"github.com/frankie-mur/gorter/internal/models"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
@@ -16,7 +17,8 @@ import (
 )
 
 type application struct {
-	urls *models.UrlModel
+	urls  *models.UrlModel
+	templ templ.Component
 }
 
 func main() {
@@ -54,9 +56,16 @@ func main() {
 
 	coll := client.Database("GorterDB").Collection("gorter")
 
+	component := hello("Frankie")
+
 	app := &application{
-		urls: &models.UrlModel{DB: coll},
+		urls:  &models.UrlModel{DB: coll},
+		templ: component,
 	}
+
+	//render html template
+
+	r.Get("/home", app.HomePage)
 
 	r.Get("/shorten/*", app.urlFind)
 	r.Post("/url/create", app.urlCreate)

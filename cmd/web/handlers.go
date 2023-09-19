@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"log"
 	"net/http"
@@ -74,4 +75,8 @@ func (app *application) urlCreate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (app *application) HomePage(w http.ResponseWriter, r *http.Request) {
+	app.templ.Render(context.Background(), w)
 }
