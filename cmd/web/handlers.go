@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -17,7 +18,7 @@ func (app *application) urlFind(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("An error occurred"))
 		return
 	}
-	http.Redirect(w, r, *url, http.StatusFound)
+	http.Redirect(w, r, url, http.StatusFound)
 	//w.Write([]byte(fmt.Sprintf("Found a single document: %+v\n", url)))
 }
 
@@ -63,18 +64,24 @@ func ErrInvalidRequest(err error) render.Renderer {
 	}
 }
 
-func (app *application) urlCreate(w http.ResponseWriter, r *http.Request) {
+func (app *application) urlCreatePost(w http.ResponseWriter, r *http.Request) {
 	data := &urlPost{}
-	err := render.Bind(r, data)
+	//err := render.Bind(r, data)
+	err := r.ParseForm()
 	if err != nil {
 		//Send back 400
 		render.Render(w, r, ErrInvalidRequest(err))
 
 	}
+
+	data.ShortUrl = r.FormValue("short_url")
+	data.OriginalURL = r.FormValue("original_url")
+
 	err = app.urls.CreateUrl(data.ShortUrl, data.OriginalURL)
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Print("Successfully created url: ", data.ShortUrl)
 }
 
 func (app *application) HomePage(w http.ResponseWriter, r *http.Request) {

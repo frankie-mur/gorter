@@ -56,17 +56,17 @@ func main() {
 
 	coll := client.Database("GorterDB").Collection("gorter")
 
-	component := hello("Frankie")
+	component := form("Frankie")
 
 	app := &application{
 		urls:  &models.UrlModel{DB: coll},
 		templ: component,
 	}
 
-	r.Get("/home", app.HomePage)
+	r.Get("/", app.HomePage)
 
-	r.Get("/shorten/*", app.urlFind)
-	r.Post("/url/create", app.urlCreate)
+	r.Get("/url/shorten/*", app.urlFind)
+	r.Post("/url/create", app.urlCreatePost)
 
 	http.ListenAndServe(":4000", r)
 

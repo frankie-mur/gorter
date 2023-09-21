@@ -26,19 +26,19 @@ type UrlModel struct {
 	DB *mongo.Collection
 }
 
-func (m *UrlModel) FindOriginalUrl(shortURL string) (*string, error) {
+func (m *UrlModel) FindOriginalUrl(shortURL string) (string, error) {
 	var result Url
 	err := m.DB.FindOne(context.TODO(), bson.D{{Key: "shortURL", Value: shortURL}}).Decode(&result)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			log.Fatal(err)
-			return nil, err
+			return "", err
 		}
 		log.Fatal(err)
-		return nil, err
+		return "", err
 	}
 
-	return &result.OriginalURL, nil
+	return result.OriginalURL, nil
 }
 
 func (m *UrlModel) CreateUrl(shortUrl string, originalUrl string) error {

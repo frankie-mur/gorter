@@ -1,0 +1,19 @@
+package main
+
+templ form(url string) {
+    <div>
+        <form action='/url/create' method='POST' novalidate>
+            <div>
+                <label>Original url:</label>
+                <input type='text' name='original_url' value=''/>
+            </div>
+            <div>
+                <label>Short url:</label>
+                <input type='text' name='short_url'/>
+            </div>
+            <div>
+                <input type='submit' value='Create'/>
+            </div>
+        </form>
+    </div>
+}
