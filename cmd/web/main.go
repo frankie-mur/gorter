@@ -65,7 +65,7 @@ func main() {
 
 	r.Get("/", app.HomePage)
 
-	r.Get("/url/shorten/*", app.urlFind)
+	r.Get("/*", app.urlFind)
 	r.Post("/url/create", app.urlCreatePost)
 
 	http.ListenAndServe(":4000", r)

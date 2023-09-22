@@ -28,6 +28,7 @@ type UrlModel struct {
 
 func (m *UrlModel) FindOriginalUrl(shortURL string) (string, error) {
 	var result Url
+	fmt.Printf("Looking for matching with short URL: %s\n", shortURL)
 	err := m.DB.FindOne(context.TODO(), bson.D{{Key: "shortURL", Value: shortURL}}).Decode(&result)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {

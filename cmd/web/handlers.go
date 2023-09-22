@@ -14,11 +14,15 @@ import (
 func (app *application) urlFind(w http.ResponseWriter, r *http.Request) {
 	shortUrl := chi.URLParam(r, "*")
 	url, err := app.urls.FindOriginalUrl(shortUrl)
+	fmt.Printf("Found original url %s", url)
 	if err != nil {
 		w.Write([]byte("An error occurred"))
 		return
 	}
-	http.Redirect(w, r, url, http.StatusFound)
+
+	safeUrl := SafeRedirectURL(url)
+
+	http.Redirect(w, r, safeUrl, http.StatusFound)
 	//w.Write([]byte(fmt.Sprintf("Found a single document: %+v\n", url)))
 }
 
@@ -74,14 +78,26 @@ func (app *application) urlCreatePost(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	data.ShortUrl = r.FormValue("short_url")
+	//	data.ShortUrl = r.FormValue("short_url")
 	data.OriginalURL = r.FormValue("original_url")
 
+	shortUrl := GenerateRandomURL()
+	if err != nil {
+		log.Fatal("Error generating unique url: ", err)
+	}
+
+	data.ShortUrl = shortUrl
+	//Store url's in DB
+	fmt.Println("short_url", data.ShortUrl)
+	fmt.Println("Original URL", data.OriginalURL)
 	err = app.urls.CreateUrl(data.ShortUrl, data.OriginalURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Print("Successfully created url: ", data.ShortUrl)
+
+	fmt.Print("Successfully created url")
+	w.WriteHeader(200)
+	w.Write([]byte(data.ShortUrl))
 }
 
 func (app *application) HomePage(w http.ResponseWriter, r *http.Request) {
