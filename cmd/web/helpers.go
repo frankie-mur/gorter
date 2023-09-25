@@ -27,6 +27,16 @@ func GenerateRandomURL() string {
 	return string(result)
 }
 
+// func GetHostName() (string, error) {
+// 	hostname, err := os.Hostname()
+// 	if err != nil {
+// 		return "", err
+// 	}
+
+// 	return hostname, nil
+
+// }
+
 func SafeRedirectURL(input string) string {
 	// Check if the input starts with http:// or https://
 	if !strings.HasPrefix(input, "http://") && !strings.HasPrefix(input, "https://") {

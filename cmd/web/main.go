@@ -56,7 +56,7 @@ func main() {
 
 	coll := client.Database("GorterDB").Collection("gorter")
 
-	component := form("Frankie")
+	component := home("")
 
 	app := &application{
 		urls:  &models.UrlModel{DB: coll},

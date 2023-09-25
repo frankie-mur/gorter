@@ -88,8 +88,6 @@ func (app *application) urlCreatePost(w http.ResponseWriter, r *http.Request) {
 
 	data.ShortUrl = shortUrl
 	//Store url's in DB
-	fmt.Println("short_url", data.ShortUrl)
-	fmt.Println("Original URL", data.OriginalURL)
 	err = app.urls.CreateUrl(data.ShortUrl, data.OriginalURL)
 	if err != nil {
 		log.Fatal(err)
@@ -97,6 +95,14 @@ func (app *application) urlCreatePost(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Print("Successfully created url")
 	w.WriteHeader(200)
+	//Append the short url to the route
+	//and Update the home page with the shortUrl
+	hostname, err := GetHostName()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	app.templ = home(fmt.Sprintf("%s/%s", hostname, shortUrl))
+	app.templ.Render(context.Background(), w)
 	w.Write([]byte(data.ShortUrl))
 }
 
